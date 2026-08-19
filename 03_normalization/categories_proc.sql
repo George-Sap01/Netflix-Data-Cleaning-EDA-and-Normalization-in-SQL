@@ -1,15 +1,15 @@
--- procedure to seperate categories table and categories_shows
-drop procedure if exists seperate_categories;
+-- procedure to fill categories and categories_shows tables
+drop procedure if exists insert_categories;
 
 /*
 	tables:
-		cnet 
+		clean_data
         categories 
         categories_shows
 */
 
 delimiter $$
-create procedure seperate_categories()
+create procedure insert_categories()
 begin 
 create temporary table if not exists temp(
 			id int primary key not null auto_increment,
@@ -23,7 +23,7 @@ create temporary table if not exists temp(
 			id,
             concat(listed_in, ',') as remaining,
             cast('' as char(300)) as token
-		from cnet
+		from clean_data
         UNION ALL
         select 
 			id,
@@ -41,7 +41,7 @@ create temporary table if not exists temp(
 
 	-- insert ids into intermediate table
     insert into categories_shows(show_id, category_id)
-		select temp.show_id, categories.id
+		select distinct temp.show_id, categories.id
 		from temp inner join categories on temp.category_name = categories.name;
     
     drop temporary table if exists temp;

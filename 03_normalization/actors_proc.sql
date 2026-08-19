@@ -1,17 +1,17 @@
--- procedure to seperate actors table and actors_shows
-drop procedure if exists seperate_actors;    
+-- procedure to fill actors and actors_shows tables
+drop procedure if exists insert_actors;    
 
 /*
 	tables i use:
-		cnet 
+		clean_data 
         actors 
         actors_shows
 */
 
             
 delimiter $$
-create procedure seperate_actors ()
-begin
+create procedure insert_actors ()
+begin    
 	create temporary table if not exists temp(
 			id int primary key not null auto_increment,
 			show_id int not null,
@@ -24,7 +24,7 @@ begin
 			id,
             concat(cast, ',') as remaining,
             cast('' as char(500)) as token
-		from cnet
+		from clean_data
         UNION ALL
         select 
 			id,
@@ -38,14 +38,13 @@ begin
     where token != '';
     
     -- insert actor_name into actors table
-    insert into actors(name) select distinct actor_name from temp;
-
-	-- insert ids into intermediate table
-    insert into actors_shows(show_id, actor_id)
-		select temp.show_id, actors.id
-		from temp inner join actors on temp.actor_name = actors.name;
+     insert into actors(name) select distinct actor_name from temp;
     
+	-- insert ids into intermediate table
+     insert into actors_shows(show_id, actor_id)
+ 		select distinct temp.show_id, actors.id
+  		from temp inner join actors on temp.actor_name = actors.name;
+
     drop temporary table if exists temp;
 end $$
 delimiter ;
-

@@ -1,15 +1,15 @@
--- procedure to seperate countries table and countries_shows
-drop procedure if exists seperate_countries;    
+-- procedure to fill countries  and countries_shows tables
+drop procedure if exists insert_countries;    
 
 /*
 	tables:
-		cnet 
+		clean_data
 	    countries
         countries_shows
 */
 
 delimiter $$
-create procedure seperate_countries ()
+create procedure insert_countries ()
 begin 
 	create temporary table if not exists temp(
 			id int primary key not null auto_increment,
@@ -23,7 +23,7 @@ begin
 			id,
             concat(country, ',') as remaining,
             cast('' as char(500)) as token
-		from cnet
+		from clean_data
         UNION ALL
         select 
 			id,
@@ -41,7 +41,7 @@ begin
 
 	-- insert ids into intermediate table
     insert into countries_shows(show_id, country_id)
-		select temp.show_id, countries.id
+		select distinct temp.show_id, countries.id
 		from temp inner join countries on temp.country_name = countries.name;
     
     drop temporary table if exists temp;

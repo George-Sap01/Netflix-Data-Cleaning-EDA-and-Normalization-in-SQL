@@ -16,9 +16,9 @@ The original dataset was imported as a single, un-normalized flat table. This st
 * **Inconsistent Types**: The `date_added` field was stored as text strings (e.g., "September 25, 2021") instead of a proper `DATE` format.
 
 ## Part 1: Data Cleaning & Standardizing
-* **Type Conversion**: Text-based dates were converted into a standardized `YYYY-MM-DD` format using `STR_TO_DATE`. Missing dates default to `1900-01-01`.
+* **Type Conversion**: Text-based dates were converted into a standardized `YYYY-MM-DD` format using `STR_TO_DATE`. Missing dates default to `NULL`.
 
-* **Column Modification**: The `show_id` column was converted to an integer auto-incrementing *Primary Key* (id). Unused columns like rating were dropped.
+* **Column Modification**: The `show_id` column was converted to an integer auto-incrementing ***Primary Key*** (id). Unused columns like rating were dropped.
 
 * **Handling Missing Values**: Missing strings in `director`, `cast`, and `country` were populated with "`Unknown`"
 
@@ -54,7 +54,7 @@ The schema was normalized up to **Third Normal Form** (3NF).
 ## Technologies Used
 
 - MySQL
-- Recursive CTEs
+- CTEs
 - Stored Procedures
 - Window Functions
 - Database Design (3NF)
@@ -62,6 +62,32 @@ The schema was normalized up to **Third Normal Form** (3NF).
 - Data Cleaning
 - Exploratory Data Analysis
 - Outlier Detection (`IQR Method`)
+
+
+## Repository Structure
+```
+Netflix-Data-Cleaning-EDA-and-Normalization-in-SQL/
+│
+├── data/
+│   └── netflix_titles.csv
+│
+│   # SQL scripts for ETL and data analysis   
+├───├── init_database.sql     # creating the dababase for the project 
+│   ├── 00_loading_raw_data/  # scripts for extracting and loading the raw data 
+│   ├── 01_cleaning_data/     # scripts for cleaning  and transforming data
+│   ├── 02_cleaning_data/     # ----------------- // -----------------
+│   ├── 03_normalization/     # scripts for splitting and normalizing tables
+│   └── 04_data_analysis/     # scripts for eda and advanced data analysis
+│
+├── docs/
+│   ├── data_catalog.md/                  # Catalog of datasets, including field descriptions and metadata
+│   ├── data_process.png/                 # Showing the 3 different tables that are used for data cleaning
+│   ├── entity_relationship_diagram.png/  # ERD 
+│   └── Schema_Normalization/             # Notes on the normalization
+│
+└── README.md
+
+```
 
 ## Reference 
 Dataset Source: <https://www.kaggle.com/datasets/shivamb/netflix-shows>

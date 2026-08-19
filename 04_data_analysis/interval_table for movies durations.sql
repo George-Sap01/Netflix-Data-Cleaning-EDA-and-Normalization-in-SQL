@@ -1,12 +1,24 @@
+/*
+===============================================================================
+Script Purpose: 
+	Implement a stored procedure that populates a table with various intervals,
+ 	helpful for	distribution of variables 
+
+	The procedure accepts only 5, 10 or 20 strictly
+===============================================================================
+*/
+
 /* Helper table to calculate movie duration distribution */
 drop table if exists intervals_table;
 
 create table if not exists intervals_table(
-	id int primary key unique auto_increment,
+	id int primary key auto_increment,
     val varchar(10) unique not null,
     lower_bound int unique not null,
     upper_bound int unique not null
 );
+
+truncate table intervals_table;
 
 -- creating a table for the distribution of movie's duration
 drop procedure if exists interval_proced;

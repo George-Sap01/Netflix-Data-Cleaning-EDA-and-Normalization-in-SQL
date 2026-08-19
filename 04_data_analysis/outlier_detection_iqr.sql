@@ -1,3 +1,12 @@
+/*
+===============================================================================
+Script Purpose: 
+	Implement outlier detection technique in SQL: Interquartile Range (IQR)
+===============================================================================
+*/
+
+
+
 /* average number of seasons of a series */
 select 
 	round(avg(dur), 2) as 'Average number of seasons of a series',

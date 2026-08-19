@@ -1,22 +1,31 @@
-/* --------------------  more queries  -------------------- */ 
+/*
+===============================================================================
+Script Purpose: 
+	Different queries vol.2
+===============================================================================
+*/
 
-select max(year) max_year, min(year) as min_year
+select
+	min(year) as min_year,
+	max(year) as max_year
 from (
 	select extract(year from date_added) as year
 	from shows
-    where date_added != '1900-01-01') as a;    
+    where date_added is not NULL
+) as a;    
 /* the column date_added is keeping  track of movies that were added between 2008 and 2021 */
 
 
 -- Number of movies added each year from 2008-2008
-with table_a as(
+with table_a as
+(
 	select 
 		id,
         title,
         date_added,
         extract(year from date_added) as year
 	from shows
-    where date_added != '1900-01-01'
+    where date_added is not NULL
 )
 
 select year, count(id) '# of movies/series added each year'
@@ -26,7 +35,8 @@ order by year asc;
 
 		
 -- Number of movies added in each season from 2008-2021, in descending order.
-with table_a as (
+with table_a as 
+(
 	select 
 		id, 
 		title,
@@ -38,7 +48,7 @@ with table_a as (
 			when extract(month from date_added) in (9, 10, 11)  then 4
 			end as season
 	from shows
-    where date_added != '1900-01-01'
+    where date_added is not NULL
 )
 
 select 
@@ -54,7 +64,8 @@ group by season
 order by 2 desc;
 
 -- 3 most famous categerories for each season
-with table_a as (
+with table_a as 
+(
 	select id, title,
 		case 
 			when extract(month from date_added) in (1, 2, 12) then 1
@@ -63,9 +74,10 @@ with table_a as (
 			when extract(month from date_added) in (9, 10, 11)  then 4
 			end as season
 	from shows
-    where date_added != '1900-01-01'
+    where date_added is not NULL
 ),
-table_b as (
+table_b as 
+(
 	select season, categories.name, count(*) as num
 	from table_a
 		inner join categories_shows cs on cs.show_id = table_a.id
@@ -73,7 +85,8 @@ table_b as (
 	group by season, categories.name
 )
 
-select case 
+select 
+	case 
 		when season=1 then 'December - January - February'
 		when season=2 then 'March - April - May'
 		when season=3 then 'June - July - August'
@@ -82,6 +95,7 @@ select case
     name, num as '# of appearances in each season'
 from (
 	select season, name, num, dense_rank() over(partition by season order by num desc) as r
-	from table_b) as a 
+	from table_b
+) as a 
 where r < 4
 order by season, r asc;

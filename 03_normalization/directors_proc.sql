@@ -1,15 +1,15 @@
--- procedure to seperate directors table and directos_shows
-drop procedure if exists seperate_directors;    
+-- procedure to fill directors and directors_shows tables
+drop procedure if exists insert_directors;    
 
 /*
 	tables:
-		cnet 
+		clean_data 
         directors 
         directors_shows
 */
 
 delimiter $$
-create procedure seperate_directors ()
+create procedure insert_directors ()
 begin 
 	create temporary table if not exists temp(
 			id int primary key not null auto_increment,
@@ -23,7 +23,7 @@ begin
 			id,
             concat(director, ',') as remaining,
             cast('' as char(500)) as token
-		from cnet
+		from clean_data
         UNION ALL
         select 
 			id,
@@ -41,7 +41,7 @@ begin
 
 	-- insert ids into intermediate table
     insert into directors_shows(show_id, director_id)
-		select temp.show_id, directors.id
+		select distinct temp.show_id, directors.id
 		from temp inner join directors on temp.director_name = directors.name;
     
     drop temporary table if exists temp;
